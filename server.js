@@ -112,7 +112,7 @@ Also, internalize the following format; do not write anything yet. This is calle
   A reminder you must follow and operate under MIU Format: the header, the body, sub bullet if necessary, and analyst comment.`;
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 8080;
 
 const apiKey = process.env.OPENAI_API_KEY;
 
