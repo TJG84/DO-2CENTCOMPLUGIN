@@ -538,6 +538,73 @@ app.post('/upload-file', upload.single('file'), async (req, res) => {
 
 // Download Response as PDF Function //
 
+//Old MIU Format //
+
+// Define your route for generating and downloading PDF files
+app.get('/downloadMIUPDF', async (req, res) => {
+  try {
+    // Check if lastResponse is empty or null
+    if (!lastResponse) {
+      return res.status(400).json({ error: 'No data available for download.' });
+    }
+
+    // Create a new DOCX document using docxtemplater
+    const content = fs.readFileSync('downloadtemplate.docx', 'binary'); // Load your template file
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip);
+
+    // Replace the template variables with the data from lastResponse
+    const data = {
+        content: lastResponse // Assuming lastResponse contains the data you want to insert into the document
+    };
+    doc.setData(data);
+    doc.render();
+
+    // Generate the DOCX buffer
+    console.log('Generating DOCX buffer...');
+    const docxBuffer = doc.getZip().generate({ type: 'nodebuffer' });
+    console.log('DOCX buffer filled with data.');
+
+    // Check if the DOCX buffer is empty
+    if (!docxBuffer || docxBuffer.length === 0) {
+      return res.status(500).json({ error: 'Empty DOCX buffer.' });
+    }
+
+    // Create a temporary DOCX file
+    const tempDocxPath = `${__dirname}/temp.docx`;
+    fs.writeFileSync(tempDocxPath, docxBuffer);
+
+    // Use mammoth to convert the temporary DOCX file to HTML
+    console.log('Converting DOCX to HTML...');
+    const { value: htmlContent } = await mammoth.convertToHtml({ path: tempDocxPath });
+    console.log('DOCX converted to HTML.');
+
+    // Delete the temporary DOCX file
+    fs.unlinkSync(tempDocxPath);
+
+    // Use puppeteer to convert HTML to PDF
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent);
+    const pdfBuffer = await page.pdf();
+
+    await browser.close();
+
+    // Set the response headers for downloading the PDF file
+    res.setHeader('Content-Disposition', 'attachment; filename=Intelligence Note.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+
+    // Send the generated PDF as the response
+    res.end(pdfBuffer);
+
+  } catch (error) {
+    console.error('Error generating and sending PDF file:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+//Intelligence Notes //
+
 // Define your route for generating and downloading PDF files
 app.get('/downloadIntelligenceNotesPDF', async (req, res) => {
   try {
@@ -602,18 +669,16 @@ app.get('/downloadIntelligenceNotesPDF', async (req, res) => {
 });
 
 
-   //Start-up and Shut-down Functions//
+  //Start-up and Shut-down Functions//
 
   const server = app.listen(PORT, () => {
     logActivity(`Server started on port ${PORT}`);
-    
-    // Log the port number
-    console.log(`Server is running on port ${PORT}`);
+    console.log(`Server is running on http://localhost:${PORT}`);
 
     process.on('SIGTERM', () => {
         console.log('SIGTERM signal received. Shutting down gracefully.');
         server.close(() => {
-          console.log('Server closed');
+            console.log('Server closed');
         });
-    });      
+    });
 });
