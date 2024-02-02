@@ -1,4 +1,4 @@
-require('dotenv').config({ path: '/Users/timgeorgetti/Desktop/OpenAIPlugin/Openai.env' });
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const cheerio = require('cheerio');
