@@ -602,16 +602,18 @@ app.get('/downloadIntelligenceNotesPDF', async (req, res) => {
 });
 
 
-  //Start-up and Shut-down Functions//
+   //Start-up and Shut-down Functions//
 
   const server = app.listen(PORT, () => {
     logActivity(`Server started on port ${PORT}`);
-    console.log(`Server is running on http://localhost:${PORT}`);
+    
+    // Log the port number
+    console.log(`Server is running on port ${PORT}`);
 
     process.on('SIGTERM', () => {
         console.log('SIGTERM signal received. Shutting down gracefully.');
         server.close(() => {
-            console.log('Server closed');
+          console.log('Server closed');
         });
-    });
+    });      
 });
