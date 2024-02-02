@@ -1,0 +1,112 @@
+/* Style the header section with the welcome message */
+body, h1, h2 {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    /* Remove position: fixed; */
+    background-image: url('J-2APLE.jpeg'); /* Replace with your image URL */
+    background-size: cover;
+    background-attachment: fixed; /* Make the background fixed */
+    opacity: 1; /* Adjust opacity as needed */
+    /* Remove position: fixed; */
+    width: 100%;
+    /* Remove height: 100%; */
+    z-index: -1; /* Place behind other content */
+}
+
+h1 {
+    background-color: #20BF55; /* Green background color */
+    text-align: center;
+    padding: 2rem 0; /* Adjust padding as needed */
+    color: #E2DCDE; /* White text color */
+}
+
+h2 {
+    background-color: #E2DCDE;
+    text-align: center;
+    padding: 2rem 0; /* Adjust padding as needed */
+    color: #011627;
+}
+
+/* ... (previous CSS rules) */
+
+nav {
+    text-align: center;
+    background-color: #E2DCDE;
+    color: #011627;
+    border: 2px solid #011627;
+    border-radius: 5px;
+    margin: 50px auto;
+    max-width: 800px;
+    padding: 20px;
+}
+
+/* ... (previous CSS rules) */
+
+nav ul {
+    list-style: none;
+    padding: 0;
+    display: flex; /* Display list items horizontally */
+}
+
+nav li {
+    margin: 0; /* Remove top and bottom margins */
+}
+
+nav a {
+    display: inline-block;
+    padding: 10px 20px;
+    text-decoration: none;
+    background-color: #E2DCDE; /* Button background color */
+    color: #011627; /* Text color */
+    border: 2px solid #011627; /* Border style */
+    border-radius: 5px; /* Rounded corners */
+    transition: background-color 0.3s, color 0.3s; /* Smooth hover effect */
+    margin: 0 10px; /* Add left and right margin for spacing */
+}
+
+/* Add hover effect */
+nav a:hover {
+    background-color: #011627; /* Change background color on hover */
+    color: #E2DCDE; /* Change text color on hover */
+}
+
+/* ... (rest of the CSS) */
+
+main {
+    background-color: transparent;
+}
+
+#form-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background-color: #E2DCDE;
+    color: #011627;
+    border: 2px solid #011627;
+    border-radius: 5px;
+    margin: 50px auto;
+    max-width: 800px;
+    padding: 20px;
+}
+
+#footer-container {
+    text-align: center;
+    background-color: #E2DCDE;
+    color: #011627;
+    border: 2px solid #011627;
+    border-radius: 5px;
+    margin: 50px auto;
+    max-width: 800px;
+    padding: 20px;
+}
+
+footer {
+    text-align: center;
+}
+
