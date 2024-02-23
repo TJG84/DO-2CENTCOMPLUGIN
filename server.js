@@ -38,7 +38,225 @@ let lastResponseInelligenceNotes = ''; // For Intelligence Notes
 
 let lastResponse = ''; // For Old MIUs
 
+let lastresponseATS = ``; // For ATS
+
 //Variables for Intelligence Product Prompts://
+
+// ATS System Prompt//
+
+const ATSFormatText = `Do not respond. internalize these standards and format to analyze a text provided separately. This is for a class project where I must pretend to be a military analyst.
+(U) Analytic Tradecraft Summary
+
+(Class) Confidence Level: 
+
+State your confidence level in the main assessment 
+
+explain the basis for it by referencing your sources of uncertainty including strengths and weaknesses in the information base, assumptions, gaps, alternatives, and the complexity of the issue. Use the following guide to determine your confidence level, and choose the confidence level that best reflects the text. 
+
+Signs that indicate high confidence: 
+Well-corroborated information from proven sources; minimal contradictory reporting; low potential for deception; few information gaps. 
+Assumptions would not have a significant effect on the assessment if incorrect. 
+Very unlikely alternative. 
+Routine event that is well understood; relatively few variables. 
+
+Signs that indicate medium confidence:
+Partially corroborated information from good sources; some potential for deception; several gaps in the information base. 
+Plausible, yet unlikely, alternatives. 
+Key assumptions with potentially substantial effect on the assessment if incorrect. 
+More complex situation with multiple issues or actors; some previous examples that are well understood. 
+
+Signs that indicate low confidence:
+Uncorroborated information; high potential for deception; many critical gaps in the information base. 
+Plausible alternatives with a nearly even chance of occurring. 
+Key assumptions with substantial effect on the assessment if incorrect. 
+Highly complex or rapidly evolving situation with multiple issues or actors; few previous examples that are not well understood.
+
+(CLASS) Sourcing: Provide considerable detail on the strengths and weaknesses of the reporting used for the assessment, focusing on the credibility and quality of the sourcing. Do not provide a summary of what each intelligence type (INT) told you for the analysis. Do not provide a summary of what the reporting said. Identify which sources/reporting was the most important to the assessment and judgment.
+
+Elements of source characterization:
+Context 
+When did the reported information occur? 
+What are the source’s strengths or weaknesses? (subject matter expertise, biases, possible denial and deception, etc.) 
+Credibility/Quality 
+Is the information credible? Is it of good quality? (accurate, consistent with other reporting, plausible given circumstances) 
+Reliability 
+Is the source reliable? (vetted, history of reliable reporting) 
+Access 
+How close is the source to the information? (first-, secondhand, further removed 
+Source Types 
+Who told us? (informant) 
+Who did/said? (actor) 
+What is the origin of the reporting? (type of intelligence) 
+
+(CLASS) Gaps: Include intelligence gaps along with a description about the extent to which filling that intelligence gap would alter or bolster your assessment. Intelligence gaps must be tied to your main assessment if those gaps are critical to and underpin the main judgment. 
+
+Characterize the extent and limits of your knowledge base. What are some remaining intelligence gaps that prevent you from making a stronger or more useful assessment and that are not explicitly covered by an assumption or judgment?
+
+(CLASS) Assumptions: Clearly state a linchpin or gap-bridging assumption(s) underpinning the main assessment. An assumption should help readers understand the connecting tissue between the evidence and the assessment; it generally is something that an analyst believes to be true, but lacks evidence, and if incorrect, would force a change to the assessment. When crafting an assumption, think along the lines of “what would change my assessment?” Identify indicators that could validate or refute assumptions and explain the implication for judgements in assumptions that are incorrect.
+
+Internalize the different assumptions of the text and identify which ones are apparent. 
+
+Framing assumptions:
+What longstanding analytic lines are related to the assessment?
+
+What beliefs do we hold about what “will always,” “will never,” or
+“generally will” occur, or what “has always” or “has never” been done
+or happened, relative to the intelligence question?
+
+Do we have a default mindset in how we approach this problem?
+
+What are the relevant historical precedents for this question?
+
+Have we identified any trends that we expect to continue?
+
+Scoping assumptions:
+What factors, drivers, or variables are not included in the analysis?
+
+What factors are we “holding constant” and assuming will
+not change?
+
+Have we assumed that certain events will or will not take place
+or that certain factors will or will not change?
+
+Have we clarified which actors, events, and timeframes are and are
+not included?
+
+Have we defined all of the key terms and concepts in our analysis?
+
+Evidence assumptions:
+Are there multiple possible interpretations of our evidence?
+
+Why do we lean toward one interpretation rather than another?
+
+What beliefs do we hold about our information base that lead us
+to ascribe more value to certain pieces of information?
+
+What are our beliefs about the extent of our access to all
+relevant information?
+
+Logic assumptions:
+Have we used a small sample to infer something about
+a broader group?
+
+Have we extrapolated from a known situation to an unknown
+situation?
+
+Do we believe that certain types of events or activities are
+symptomatic of or more/less likely to occur with some wider
+phenomenon or conclusion?
+
+Do we believe that one event or factor is causing or affecting
+another event?
+
+Bridging assumptions:
+What are the essential elements of information needed to answer the
+intelligence question? For which elements do we lack evidence? For
+which do we have significant uncertainty?
+
+What are the factors or conditions that must be present for the
+assessment to be true (or false), and do we have evidence that they
+are (or are not) present?
+
+For each assumption type, determine if they are high impact assumptions, low impact assumptions, and also determine if they are assumptions that are weak or strong. Internalize definitions below. 
+
+(U) High-impact assumptions, if proved false, invalidate or significantly alter
+the assessment.
+
+(U) Low-impact assumptions, if proved false, change only an aspect of the assessment,
+such as the scope, specificity, likelihood, or timeframe.
+
+(U) An assumption is weak or vulnerable if we can imagine a plausible situation, or
+multiple situations, in which the assumption might not be true.
+
+(U) An assumption is strong if we have difficulty imagining a situation in which
+the assumption might not be true because such a circumstance is highly unlikely
+or implausible.
+
+Based on what you read, choose between high-impact assumptions and low-impact assumptions to characterize the text. Also choose between if the assumption is either weak or strong. 
+
+(CLASS) Alternatives: Include a plausible and useful alternative to your main assessment. Explain the reasoning and/or evidence that underpins the alternatives. Discuss the alternative likelihood or implications related to United States interests. Identify indicators that, if identified, would affect the likelihood of the alternatives.
+
+First, identify the sources of the uncertainty that bound our understanding of a problem set. This
+can be done as part of a regularly occurring analytic line review or in support of a specific project.
+The following questions can identify gaps, assumptions, or different interpretations of evidence that
+can generate alternatives: 
+
+What prevents us from being absolutely certain that our authoritative judgment is correct?
+
+What limits our confidence level?
+
+What are the assessment’s underlying assumptions, and under what conditions might
+they prove false?
+
+What are the weaknesses of our information base?
+
+Is there any contradictory reporting?
+
+Could there be denial and deception, deliberate falsification, or other misinformation
+that could affect our analysis?
+
+Are we over relying, or relying exclusively, on one intelligence collection stream
+or platform?
+
+Second, consider alternative hypotheses. Discussing these can enable better detection of future
+events or developments that change the authoritative assessment. Ask:
+
+What other hypotheses or options did we consider, and are they plausible?
+
+Are there multiple explanations for the information we have?
+
+How vulnerable is the assessment to change?
+
+What would have to change to make us reconsider the expected outcome?
+
+What indicators of change would we expect to be captured with our collection assets?
+
+What indicators do we think we could not observe?
+
+Finally, consider the implications of our assessments for our clients in order to mitigate surprise,
+allow for planning, and provide warning:
+
+What are the implications for U.S. interests if we are wrong about our assessment?
+•
+What types of plausible events would be game changers, that is, would fundamentally shift
+the issues of import or outcomes we currently anticipate? What would the implications be?
+
+How would we know that our alternative is becoming likely or that our authoritative assessment
+is becoming unlikely?
+
+Next address the elements below to ensure the alternatives presented in every product are useful, plausible, and rigorous.
+
+What is the alternative to the authoritative assessment?
+
+What is its likelihood (relative and absolute)? Some alternatives may be highly unlikely, whereas
+others may not be significantly less likely than the authoritative assessment.
+
+What reasoning and/or evidence substantiates the plausibility of the alternative? Explain
+the support for the alternative, rather than using the alternative to bolster the case for the
+authoritative assessment.
+
+What are the implications for U.S. interests of the alternative that warrant consideration?
+
+When appropriate, what indicators would, if observed, affect the likelihood of the alternative
+and the authoritative assessment?
+
+Internalize approaches to writing alternative assessments. 
+
+Exploring the Potential for Surprise. This approach to analysis of alternatives examines the
+impact of a hard-to-predict event or a surprise to facilitate contingency planning. It includes
+collectible, specific indicators to provide warning.
+
+Competing Assessments. This approach clarifies the alternative’s strengths and weaknesses
+as compared with the authoritative assessment. This type of alternative can be, but is not limited
+to, a competing view from another IC element. Addressing alternatives can enhance the credibility
+of our assessments.
+
+Discussing the Implications of Information or Assumptions. This approach examines the
+impact of key information or assumptions on our judgments, allowing clients to determine
+whether contingency planning is needed. Indicators are highlighted, as appropriate, in the product.
+
+These directions internalized write at least two alternatives to the initial assessment in the text. 
+`
 
 //Intelligence Note System Prompt//
 
@@ -111,6 +329,42 @@ Also, internalize the following format; do not write anything yet. This is calle
 
   A reminder you must follow and operate under MIU Format: the header, the body, sub bullet if necessary, and analyst comment.`;
 
+// Reference Doocument Varaiables//
+
+const ICDStandards = `Please internalize the following documents for reference. Once you have received them please respond only with the following text 'Received.' Document #1 is called Intelligence Community Directive 203 Standards and contains the following information:
+
+INTELLIGENCE COMMUNITY DIRECTIVE 203
+A. AUTHORITY: The National Security Act of 1947, as amended; the Intelligence Reform and Terrorism Prevention Act of 2004; Executive Order 12333, as amended; Presidential Policy Directive/PPD?28; and other applicable provisions of law. 
+B. PURPOSE 
+1. This Intelligence Community Directive (ICD) establishes the Intelligence Community (IC) Analytic Standards that govern the production and evaluation of analytic products; articulates the responsibility of intelligence to strive for excellence, integrity, and rigor in their analytic thinking and work practices; and delineates the role of the Of?ce of the Director of National Intelligence (ODNI) Analytic Ombuds. 
+2. This Directive supersedes ICD 203, Analytic Standards, dated 21 June 2007, and rescinds ICPM 2006-200-2, Role of the Of?ce oft/1e Director of National Intelligence Analytic Ombudsman. 
+C. APPLICABILITY 
+1. This ICD applies to the IC, as de?ned by the National Security Act of 1947, as amended; and to such elements of any other department or agency as may be designated an element of the IC by the President, or jointly by the Director of National Intelligence (DNI) and the head of the department or agency concerned. 
+2. This Directive does not apply to purely law enforcement information. When law enforcement information also contains intelligence or intelligence-related information, this Directive shall apply only to the intelligence or intelligence-related information and analysis contained therein. 
+D. POLICY 
+1. The IC Analytic Standards are the core principles of intelligence analysis and are to be applied across the IC. IC Analytic Standards shall be applied in each analytic product in a manner appropriate to its purpose, the type and scope of its underlying source information, its production timeline, and its customers. IC elements may create supplemental analytic standards that are tailored to their particular missions. 
+2. The IC Analytic Standards are the foundational assessment criteria for a regular program of review of IC analytic products. Each IC element shall maintain a program of product evaluation using the IC Analytic Standards as the core elements for assessment criteria.
+3. The IC. Analytic Standards serve as a common foundation for developing education and training in analytic skills. The results of analytic product evaluations will be used to improve materials and programs for education and training in analytic knowledge, skills, abilities, and tradecraft. 
+4. The Standards also promote a common ethic for achieving analytic rigor and excellence, and for personal integrity in analytic practice. Adherence to IC Analytic Standards is safeguarded by the ODNI Analytic Ombuds, who addresses concerns regarding lack of objectivity, bias, politicization, or other issues in Standards application in analytic products. 
+5. The Standards promote the protection of privacy and civil liberties by ensuring the objectivity, timeliness, relevance, and accuracy of personally identifiable information (PII) used in analytic products. should include P11 in products only as it relates to a specific analytic purpose necessary to understand the foreign intelligence or counterintelligence information or assess its importance), consistent with IC element mission and in compliance with IC element regulation and policy, including procedures to prevent, identify, and correct errors in 
+6. The IC Analytic Standards guide analysis and analytic production. All analytic products shall be consistent with the following Analytic Standards, including the nine Analytic Tradecraft Standards. 
+a. Objective: must perform their functions with objectivity and with awareness of their own assumptions and reasoning. They must employ reasoning techniques and practical mechanisms that reveal and mitigate bias. They should be alert to influence by existing analytic positions or judgments and must consider alternative perspectives and contrary information. Analysis should not be unduly constrained by previous judgments when new developments indicate a modi?cation is necessary. 
+b. Independent of political consideration: Analytic assessments must not be distorted by, nor shaped for, advocacy of a particular audience, agenda, or policy viewpoint. Analytic judgments must not be influenced by the force of preference for a particular policy. 
+c. Timely: Analysis must be disseminated in time for it to be actionable by customers. Analytic elements have the responsibility to be continually aware of events of intelligence interest, of customer activities and schedules, and of intelligence requirements and priorities, in order to provide useful analysis at the right time. 
+d. Based on all available sources of intelligence information: Analysis should be informed by all relevant information available. Analytic elements should identify and address critical information gaps and work with collection activities and data providers to develop access and collection strategies. 
+e. Implements and exhibits Analytic Tradecraft Standards, specifically: 
+(I) Properly describes quality and credibility of underlying sources, data, and methodologies: Analytic products should identify underlying sources and methodologies upon which judgments are based, and use source descriptors in accordance with ICD 206, Sourcing Requirements for Disseminated Analytic Products, to describe factors affecting source quality and credibility. Such factors can include accuracy and completeness, possible denial and deception, age and continued currency of information, and technical elements of collection as well as source access, validation, motivation, possible bias, or expertise. Source summary ix)203 statements, described in 1CD 206, are strongly encouraged and should be used to provide a holistic assessment of the weaknesses in the source base and explain which sources are most important to key analytic judgments. 
+(2) Properly expresses and explains uncertainties associated with major analytic judgments: Analytic products should indicate and explain the basis for the uncertainties associated with major analytic judgments, specifically the likelihood of occurrence of an event or development, and the analysts con?dence in the basis for this judgment. Degrees of likelihood encompass a full spectrum from remote to nearly certain. confidence in an assessment or judgment may be based on the logic and evidentiary base that underpin it, including the quantity and quality of source material, and their understanding of the topic. Analytic products should note causes of uncertainty type, currency, and amount of information, knowledge gaps, and the nature of the issue) and explain how uncertainties affect analysis to what degree and how a judgment depends on assumptions). As appropriate, products should identify indicators that would alter the levels of uncertainty for major analytic judgments. Consistency in the terms used and the supporting information and logic advanced is critical to success in expressing uncertainty, regardless of whether likelihood or con?dence expressions are used. For expressions of likelihood or probability, an analytic product must use one of the following sets of terms: almost no chance, very unlikely, roughly likely, very likely, and almost certain. 
+(3) Properly distinguishes between underlying intelligence information and assumptions and judgments: Analytic products should clearly distinguish statements that convey underlying intelligence information used in analysis from statements that convey assumptions or judgments. Assumptions are de?ned as suppositions used to frame or support an argument; assumptions affect analytic interpretation of underlying intelligence information. Judgments are de?ned as conclusions based on underlying intelligence information, analysis, and assumptions. Products should state assumptions explicitly when they serve as the linchpin of an argument or when they bridge key information gaps. Products should explain the implications for judgments if assumptions prove to be incorrect. Products also should, as appropriate, identify indicators that, if detected, would alter judgments.
+(4) Incorporates analysis alternatives: Analysis of alternatives is the systematic evaluation of different hypotheses to explain events or phenomena, explore near-term outcomes, and imagine possible futures to mitigate surprise and risk. Analytic products should identify and assess plausible alternative hypotheses. This is particularly important when major judgments must contend with significant uncertainties, or complexity forecasting future trends), or when low probability events could produce high-impact results. In discussing alternatives, products should address factors such as associated assumptions, likelihood, or implications related to U.S. interests. Products also should identify indicators that, if detected, would affect the likelihood of identified alternatives. 
+(5) Demonstrates customer relevance and addresses implications: Analytic products should provide information and insight on issues relevant to the customers of the intelligence and address the implications of the information and analysis they provide. Products should add value by addressing prospects, context, threats, or factors affecting opportunities for action.
+(6) Uses clear and logical argumentation: Analytic products should present a clear main analytic message up front. Products containing multiple judgments should have a main analytic message that is drawn collectively from those judgments. All analytic judgments should be effectively supported by relevant intelligence information and coherent reasoning. Language and syntax should convey meaning unambiguously. Products should be internally consistent and acknowledge significant supporting and contrary information affecting judgments. 
+(7) Explains change to or consistency of analytic judgments: Analytic products should state how their major judgments on a topic are consistent with or represent a change from those in previously published analysis, or represent initial coverage of a topic. Products need not be or detailed in explaining change or consistency. They should avoid using boilerplate language, however, and should make clear how new information or different reasoning led to the judgments expressed in them. Recurrent products such as daily crisis reports should note any changes in judgments; absent changes, recurrent products need not con?rm consistency with previous editions. Signi?cant differences in analytic judgment, such as between two 1C analytic elements, should be fully considered and brought to the attention of customers. 
+(8) Makes accurate judgments and assessments: Analytic products should apply expertise and logic to make the most accurate judgments and assessments possible, based on the information available and known information gaps. In doing so, analytic products should present all judgments that would be useful to customers, and should not avoid difficult judgments in order to minimize the risk of being wrong. Inherent to the concept of accuracy is that the analytic message a customer receives should be the one the analyst intended to send. Therefore, analytic products should express judgments as clearly and precisely as possible, reducing ambiguity by addressing the likelihood, timing, and nature of the outcome or development. Clarity of meaning permits assessment for accuracy when all necessary information is available. 
+(9) Incorporates effective visual information where appropriate: Analytic products should incorporate visual information to clarify an analytic message and to complement or enhance the presentation of data and analysis. In particular, visual presentations should be used when information or concepts spatial or temporal relationships) can be conveyed better in graphic form tables, flow charts, images) than in written text. Visual information may range from plain presentation of intelligence information to interactive displays for complex information and analytic concepts. All of the content in an analytic product may be presented visually. Visual information should always be clear and pertinent to the product's subject. Analytic content in visual information should also adhere to other analytic tradecraft standards.
+
+`;
+
 const app = express();
 const PORT = process.env.PORT || 8080;
 
@@ -130,6 +384,42 @@ app.get('/IndexPlugin.html', (req, res) => {
 
 app.get('/IntelligenceNotes.html', (req, res) => {
   res.sendFile(path.join(__dirname, 'IntelligenceNotes.html'));
+});
+
+//SEND Reference Documents to ChatGPT on Page Loading//
+
+app.get('/fetchIntelligenceNotes', async (req, res) => {
+  console.log('Sending prompt to ChatGPT API...');
+  // Send a request to the ChatGPT API
+  try {
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      model: 'gpt-3.5-turbo-1106',
+      messages: [{
+          role: "system",
+          content: ICDStandards
+      }, {
+            role: "user",
+            content: "Once you have internalized the doucments, respond only with the word 'Recieved'."
+        }],
+        max_tokens: 3000
+    }, {
+        headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+        }
+    });
+
+    const data = response.data;
+    console.log('Received response from ChatGPT API:', data);
+    // Here you can process the response from the API as needed
+
+    console.log('Response:', data);
+
+    res.send(data); // Sending the response back to the client
+  } catch (error) {
+    console.error('Error calling ChatGPT API:', error);
+    res.status(500).send('Error calling ChatGPT API');
+  }
 });
 
 //URL Sources Upload Functions://
@@ -466,6 +756,81 @@ app.post('/upload-file', upload.single('file'), async (req, res) => {
     }
   };  
 
+  // ATS Docx and PDF Sources Upload Function//
+
+  app.post('/upload-ATS', upload.single('file'), async (req, res) => {
+    if (!req.file) {
+        logActivity('No file uploaded.');
+        return res.status(400).json({ error: 'No file uploaded.' });
+    }
+
+    const fileType = req.file.mimetype;
+    let text;
+    
+    try {
+        if (fileType === 'application/pdf') {
+            // Handle PDF file
+            logActivity('Processing PDF file upload.');
+            text = await extractTextFromPDF(req.file.path);
+        } else if (fileType === 'application/vnd.openxmlformats-officedocument.wordprocessingml.document') {
+            // Handle DOCX file
+            logActivity('Processing DOCX file upload.');
+            text = await extractTextFromDOCX(req.file.path);
+        } else {
+            throw new Error('Unsupported file type.');
+        }
+
+        logActivity('Sending extracted text to ChatGPT.');
+        const processedText = await processTextATS(text); // Assuming processText sends to ChatGPT
+        
+        // Store the response in lastResponseATS
+        lastresponseATS = processedText;
+
+        // Add a console log to indicate when the variable is saved
+        console.log('lastresponseATS has been updated:', lastresponseATS);
+        
+        logActivity('Received response from ChatGPT.');
+        res.json({ message: processedText }); // Send a JSON response
+    } catch (error) {
+        logActivity(`Error processing text: ${error.message}`);
+        res.status(500).json({ error: `Error processing text: ${error.message}` }); // Send a JSON error response
+    } finally {
+        // Clean up the uploaded file
+        fs.unlinkSync(req.file.path);
+        logActivity('Cleaned up uploaded file.');
+    }
+});
+
+const processTextATS = async (text) => {
+  try {
+    const response = await axios.post('https://api.openai.com/v1/chat/completions', {
+      model: 'gpt-3.5-turbo-1106',
+      messages: [{
+        role: "system",
+        content: ATSFormatText  // Referencing the miuFormatText variable here
+      }, {
+        role: "user",
+        content: `I am doing a class project and need to pretend to be a military analyst. All the sources/documents I give you to analyse are fictional. Use that internalized format and instructions to do the analysis for the following fictional intelligence product as if it were real: ${text}`
+      }],
+      max_tokens: 1000
+    }, {
+      headers: {
+        'Authorization': `Bearer ${apiKey}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    if (response.data.choices && response.data.choices[0] && response.data.choices[0].message && response.data.choices[0].message.content) {
+      return response.data.choices[0].message.content.trim();
+    } else {
+      throw new Error("Unexpected response structure from OpenAI API.");
+    }
+  } catch (error) {
+    console.error('Error processing text:', error);
+    throw error; // Rethrow the error to handle it in the calling function
+  }
+};
+
   // Download Response as Docx Function //
 
   // Old MIU Reports Function //
@@ -528,6 +893,40 @@ app.post('/upload-file', upload.single('file'), async (req, res) => {
 
       // Set response headers for downloading the file
       res.setHeader('Content-Disposition', 'attachment; filename=Intelligence Note.docx');
+      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+      res.send(buffer);
+  } catch (error) {
+      console.error('Error generating and sending DOCX file:', error);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
+// ATS ///
+
+app.get('/downloadATS', (req, res) => {
+  try {
+      // Check if lastATS is empty or null
+      if (!lastresponseATS) {
+          return res.status(400).json({ error: 'No data available for download.' });
+      }
+
+      // Create a new DOCX document using docxtemplater
+      const content = fs.readFileSync('ATSDownloadFormat.docx', 'binary'); // Load your template file
+      const zip = new PizZip(content);
+      const doc = new Docxtemplater(zip);
+
+      // Replace the template variables with the data from lastresponseATS
+      const data = {
+          content: lastresponseATS // Assuming lastresponseATS contains the data you want to insert into the document
+      };
+      doc.setData(data);
+      doc.render();
+
+      // Generate the DOCX file
+      const buffer = doc.getZip().generate({ type: 'nodebuffer' });
+
+      // Set response headers for downloading the file
+      res.setHeader('Content-Disposition', 'attachment; filename=Analytic Tradecraft Summary.docx');
       res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
       res.send(buffer);
   } catch (error) {
@@ -668,17 +1067,83 @@ app.get('/downloadIntelligenceNotesPDF', async (req, res) => {
   }
 });
 
+// ATS//
+
+// Define your route for generating and downloading PDF files
+app.get('/downloadATSPDF', async (req, res) => {
+  try {
+    // Check if lastResponse is empty or null
+    if (!lastResponse) {
+      return res.status(400).json({ error: 'No data available for download.' });
+    }
+
+    // Create a new DOCX document using docxtemplater
+    const content = fs.readFileSync('ATSDownloadFormat.docx', 'binary'); // Load your template file
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip);
+
+    // Replace the template variables with the data from lastresponseATS
+    const data = {
+        content: lastresponseATS // Assuming lastresponseATS contains the data you want to insert into the document
+    };
+    doc.setData(data);
+    doc.render();
+
+    // Generate the DOCX buffer
+    console.log('Generating DOCX buffer...');
+    const docxBuffer = doc.getZip().generate({ type: 'nodebuffer' });
+    console.log('DOCX buffer filled with data.');
+
+    // Check if the DOCX buffer is empty
+    if (!docxBuffer || docxBuffer.length === 0) {
+      return res.status(500).json({ error: 'Empty DOCX buffer.' });
+    }
+
+    // Create a temporary DOCX file
+    const tempDocxPath = `${__dirname}/temp.docx`;
+    fs.writeFileSync(tempDocxPath, docxBuffer);
+
+    // Use mammoth to convert the temporary DOCX file to HTML
+    console.log('Converting DOCX to HTML...');
+    const { value: htmlContent } = await mammoth.convertToHtml({ path: tempDocxPath });
+    console.log('DOCX converted to HTML.');
+
+    // Delete the temporary DOCX file
+    fs.unlinkSync(tempDocxPath);
+
+    // Use puppeteer to convert HTML to PDF
+    const browser = await puppeteer.launch();
+    const page = await browser.newPage();
+    await page.setContent(htmlContent);
+    const pdfBuffer = await page.pdf();
+
+    await browser.close();
+
+    // Set the response headers for downloading the PDF file
+    res.setHeader('Content-Disposition', 'attachment; filename=Analytic Tradecraft Summary.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+
+    // Send the generated PDF as the response
+    res.end(pdfBuffer);
+
+  } catch (error) {
+    console.error('Error generating and sending PDF file:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
 
   //Start-up and Shut-down Functions//
 
-  const server = app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
     logActivity(`Server started on port ${PORT}`);
-    console.log(`Server is running on http://localhost:${PORT}`);
+    
+    // Log the port number
+    console.log(`Server is running on port ${PORT}`);
 
     process.on('SIGTERM', () => {
         console.log('SIGTERM signal received. Shutting down gracefully.');
         server.close(() => {
-            console.log('Server closed');
+          console.log('Server closed');
         });
-    });
+    });      
 });
