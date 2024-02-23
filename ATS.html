@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CENTCOM J-2 APLE Virtual Analyst</title>
+    <link rel="stylesheet" href="IntelligenceProductPages.css"> <!-- External CSS for styling -->
+</head>
+<body>
+    <header>
+        <h1>CENTCOM J-2 APLE Virtual Analyst</h1>
+    </header>
+    <main>
+        <nav>
+            <h2>Website Menu:</h2>
+            <ul>
+                <li><a href="home.html">Home</a></li>
+                <li><a href="IndexPlugin.html">MIUs (Old Format)</a></li>
+                <li><a href="intelligenceNotes.html">Intelligence Notes</a></li>
+                <!-- Add more menu items as needed -->
+            </ul>
+        </nav>
+        <div id="form-container">
+           <h2>Create an Analystic Tradecraft Summary (ATS) of an Intelligence Product:</h2>
+            <section>
+                <p>Upload a .DOCX/.PDF file of an Intelligence Product to create an ATS:</p>
+                <form id="fileATS" method="post" enctype="multipart/form-data">
+                    <input type="file" name="file" accept=".docx, .pdf" />
+                    <input type="submit" value="Upload File" />
+                </form>
+            </section>
+            <section>
+                <h2>Finished Analystic Tradecraft Summary (ICD 203 Compliant):</h2>
+                <textarea id="summaryOutputATS" rows="20" cols="80" readonly></textarea>
+                <button id="downloadButtonATS">Download DOCX</button>
+                <button id="generatePdfButtonATS">Download PDF</button>
+                <section>
+                    <div id="loadingATS" style="display:none;">Loading...</div>
+                </section>
+            </section>            
+        </div>
+        <div id="footer-container">
+            <f1>Note: The prompt being used is engineered to produce results in the ATS format for an already finished intelligence product. As such any documents/urls uploaded that do not read like finished intelligence products will result in less accurate/improperly formatted outputs from ChatGPT. To ensure the best results, only input sources relevant to the style/content of ATS reviews.</f1>
+        </div>
+        <br>
+        <br>
+    </main>
+   <script>
+    // Function to format the summary according to ICD 203 standards
+    function formatATS(summary) {
+        return summary;
+    }
+
+    const form = document.getElementById('fileATS');
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const formData = new FormData(form);
+        const loadingElement = document.getElementById('loadingATS');
+        loadingElement.style.display = 'block';
+
+        try {
+            const response = await fetch('/upload-ATS', {
+                method: 'POST',
+                body: formData, // No headers here, as fetch adds the correct one for FormData
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            const formattedSummary = formatATS(data.message);
+            document.getElementById('summaryOutputATS').value = formattedSummary;
+        } catch (error) {
+            console.error('Error uploading file:', error);
+            document.getElementById('summaryOutputATS').value = `Error uploading file: ${error.message}`;
+        } finally {
+            loadingElement.style.display = 'none';
+        }
+    });
+
+    document.getElementById('downloadButtonATS').addEventListener('click', async () => {
+                try {
+                    // Send a GET request to the server to trigger the download
+                    const response = await fetch('/downloadATS', {
+                        method: 'GET',
+                    });
+
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+
+                    // Convert the response into a blob and create a download link
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = 'Analytic Tradecraft Summary.docx';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                } catch (error) {
+                    console.error('Error downloading file:', error);
+                }
+            });
+
+
+     // Client-side JavaScript to trigger the PDF generation on button click
+     document.getElementById('generatePdfButtonATS').addEventListener('click', () => {
+            // Make a GET request to your server endpoint that generates the PDF
+            fetch('/downloadATSPDF', {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/pdf', // Specify the desired response content type
+                },
+            })
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.blob();
+            })
+            .then((blob) => {
+                // Create a temporary link to trigger the download of the PDF
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Analytic Tradecraft Summary.pdf'; // Specify the desired file name
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // Handle the error as needed (e.g., display an error message)
+            });
+        });
+    
+    </script>
+</body>
+</html>
