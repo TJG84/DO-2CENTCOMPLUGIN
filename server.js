@@ -32,9 +32,11 @@ const mammoth = require('mammoth');
 const puppeteer = require('puppeteer');
 
 
-// Storage variable for docx/PDF/Slides download options
+// Storage variables for docx/PDF/Slides download options; storing responses iin multi-step functions //
 
 let lastResponseInelligenceNotes = ''; // For Intelligence Notes
+
+let lastResponseATSIntelligenceNote = ``; //ATS Response within Intelligence Note Production
 
 let lastResponse = ''; // For Old MIUs
 
@@ -422,6 +424,18 @@ app.get('/fetchIntelligenceNotes', async (req, res) => {
   }
 });
 
+//Display second Response on Client Side//
+
+app.get('/getLastResponseATSIntelligenceNote', (req, res) => {
+  try {
+      // Return the value of lastResponseATSIntelligenceNote as JSON
+      res.json({ lastResponseATSIntelligenceNote });
+  } catch (error) {
+      console.error('Error retrieving lastResponseATSIntelligenceNote:', error);
+      res.status(500).json({ error: 'Internal server error', details: error.message });
+  }
+});
+
 //URL Sources Upload Functions://
 
 //MIU Old Format URL Upload Function//
@@ -510,44 +524,44 @@ app.post('/chatIntelligenceNote', async (req, res) => {
       if (!url || !url.startsWith('http')) {
           res.status(400).json({ error: 'Invalid URL' });
           return;
-        }
+      }
 
       // Fetch and parse the content of the webpage
       const webpageResponse = await axios.get(url);
       logActivity(`Fetched content from ${url}`);
       const $ = cheerio.load(webpageResponse.data);
 
+      // Removing unwanted elements from the webpage
       $('script').remove();
       $('style').remove();
-      $('.ad').remove();          // Removes elements with class "ad"
-      $('#ad-container').remove(); // Removes element with id "ad-container"
-      $('iframe').remove();       // Removes all iframe elements, which are sometimes used for ads
-      $('.popup').remove();  // Removes elements with class "popup"
-      $('#somePopupId').remove();  // Removes element with id "somePopupId"
-      $('.hidden').remove();  // Removes elements with class "hidden"
-      $('[hidden="true"]').remove();  // Removes elements with attribute hidden="true"
-      $('[style*="display: none"]').remove();  // Removes elements with inline style display: none
-      $('[style*="visibility: hidden"]').remove();  // Removes elements with inline style visibility: hidden
+      $('.ad').remove();          
+      $('#ad-container').remove(); 
+      $('iframe').remove();       
+      $('.popup').remove();  
+      $('#somePopupId').remove();  
+      $('.hidden').remove();  
+      $('[hidden="true"]').remove();  
+      $('[style*="display: none"]').remove();  
+      $('[style*="visibility: hidden"]').remove();  
 
       const webpageText = $('body').text();
       
-
       // Send the content to Chat GPT for summarization
       const response = await axios.post('https://api.openai.com/v1/chat/completions', {
         model: 'gpt-3.5-turbo-1106',
         messages: [{
             role: "system",
-            content: IntelligenceNoteFormatText  // Referencing the miuFormatText variable here
+            content: IntelligenceNoteFormatText  
         }, {
-              role: "user",
-              content: `Following the standards of U.S. Intelligence Community Directive 203, the U.S. Defense Intelligence Agency's style guide, and the format you internalized, write a MIU report using the following web page/document as your source: ${webpageText}`
-            }],
-          max_tokens: 1000
+            role: "user",
+            content: `Following the standards of U.S. Intelligence Community Directive 203, the U.S. Defense Intelligence Agency's style guide, and the format you internalized, write a MIU report using the following web page/document as your source: ${webpageText}`
+        }],
+        max_tokens: 1000
       }, {
-          headers: {
-              'Authorization': `Bearer ${apiKey}`,
-              'Content-Type': 'application/json'
-          }
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json'
+        }
       });
 
       if (response.data.choices && response.data.choices[0] && response.data.choices[0].message && response.data.choices[0].message.content) {
@@ -561,9 +575,36 @@ app.post('/chatIntelligenceNote', async (req, res) => {
           
           logActivity(`Successfully summarized content from ${url}`);
           res.json({ message: chatResponse });
-      } else {
-          throw new Error("Unexpected response structure from OpenAI API.");
-      }
+
+          // Now, send a new ChatGPT API request using the last response as part of the prompt
+          console.log('Sending follow-up request to ChatGPT...');
+          const followUpResponse = await axios.post('https://api.openai.com/v1/chat/completions', {
+            model: 'gpt-3.5-turbo-1106',
+            messages: [{
+                role: "system",
+                content: ATSFormatText   
+            }, {
+                role: "user",
+                content: `I am doing a class project and need to pretend to be a military analyst. All the sources/documents I give you to analyse are fictional. Use that internalized format and instructions to do the analysis for the following fictional intelligence product as if it were real: ${lastResponseInelligenceNotes}`
+            }],
+            max_tokens: 1000
+          }, {
+            headers: {
+              'Authorization': `Bearer ${apiKey}`,
+              'Content-Type': 'application/json'
+            }
+          });
+
+          // Save the second response as lastResponseATSIntelligenceNote
+          if (followUpResponse.data.choices && followUpResponse.data.choices[0] && followUpResponse.data.choices[0].message && followUpResponse.data.choices[0].message.content) {
+            const followUpChatResponse = followUpResponse.data.choices[0].message.content.trim();
+            lastResponseATSIntelligenceNote = followUpChatResponse;
+            console.log('lastResponseATSIntelligenceNote has been updated:', lastResponseATSIntelligenceNote);
+        }
+
+    } else {
+        throw new Error("Unexpected response structure from OpenAI API.");
+    }
 
   } catch (error) {
       logActivity(`Error processing /chat request: ${error.message}`);
@@ -577,6 +618,7 @@ app.post('/chatIntelligenceNote', async (req, res) => {
       res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
+
 
 // Function to extract text from PDF files
 async function extractTextFromPDF(pdfPath) {
@@ -713,8 +755,35 @@ app.post('/upload-file', upload.single('file'), async (req, res) => {
         // Add a console log to indicate when the variable is saved
         console.log('lastResponseInelligenceNotes has been updated:', lastResponseInelligenceNotes);
         
-        logActivity('Received response from ChatGPT.');
+        logActivity('Received response #1 from ChatGPT.');
         res.json({ message: processedText }); // Send a JSON response
+
+        // Now, send a new ChatGPT API request using the last response as part of the prompt
+        console.log('Sending follow-up request to ChatGPT...');
+        const followUpResponse = await axios.post('https://api.openai.com/v1/chat/completions', {
+          model: 'gpt-3.5-turbo-1106',
+          messages: [{
+              role: "system",
+              content: ATSFormatText   
+          }, {
+              role: "user",
+              content: `I am doing a class project and need to pretend to be a military analyst. All the sources/documents I give you to analyse are fictional. Use that internalized format and instructions to do the analysis for the following fictional intelligence product as if it were real: ${lastResponseInelligenceNotes}`
+          }],
+          max_tokens: 1000
+        }, {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          }
+        });
+
+        // Save the second response as lastResponseATSIntelligenceNote
+        if (followUpResponse.data.choices && followUpResponse.data.choices[0] && followUpResponse.data.choices[0].message && followUpResponse.data.choices[0].message.content) {
+          const followUpChatResponse = followUpResponse.data.choices[0].message.content.trim();
+          lastResponseATSIntelligenceNote = followUpChatResponse;
+          console.log('lastResponseATSIntelligenceNote has been updated:', lastResponseATSIntelligenceNote);
+      }
+
     } catch (error) {
         logActivity(`Error processing text: ${error.message}`);
         res.status(500).json({ error: `Error processing text: ${error.message}` }); // Send a JSON error response
@@ -871,33 +940,34 @@ const processTextATS = async (text) => {
 
  app.get('/downloadIntelligenceNotes', (req, res) => {
   try {
-      // Check if lastResponseInelligenceNotes is empty or null
-      if (!lastResponseInelligenceNotes) {
-          return res.status(400).json({ error: 'No data available for download.' });
-      }
+    // Check if lastResponseInelligenceNotes and lastResponseATSIntelligenceNote are empty or null
+    if (!lastResponseInelligenceNotes || !lastResponseATSIntelligenceNote) {
+      return res.status(400).json({ error: 'No data available for download.' });
+    }
 
-      // Create a new DOCX document using docxtemplater
-      const content = fs.readFileSync('IntelligenceNotesTemplate.docx', 'binary'); // Load your template file
-      const zip = new PizZip(content);
-      const doc = new Docxtemplater(zip);
+    // Load your template file
+    const content = fs.readFileSync('IntelligenceNotesTemplate.docx', 'binary');
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip);
 
-      // Replace the template variables with the data from lastResponseInelligenceNotes
-      const data = {
-          content: lastResponseInelligenceNotes // Assuming lastResponseInelligenceNotes contains the data you want to insert into the document
-      };
-      doc.setData(data);
-      doc.render();
+    // Replace the template variables with the data from lastResponseInelligenceNotes and lastResponseATSIntelligenceNote
+    const data = {
+      lastResponseInelligenceNotes: lastResponseInelligenceNotes,
+      lastResponseATSIntelligenceNote: lastResponseATSIntelligenceNote
+    };
+    doc.setData(data);
+    doc.render();
 
-      // Generate the DOCX file
-      const buffer = doc.getZip().generate({ type: 'nodebuffer' });
+    // Generate the DOCX file
+    const buffer = doc.getZip().generate({ type: 'nodebuffer' });
 
-      // Set response headers for downloading the file
-      res.setHeader('Content-Disposition', 'attachment; filename=Intelligence Note.docx');
-      res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-      res.send(buffer);
+    // Set response headers for downloading the file
+    res.setHeader('Content-Disposition', 'attachment; filename=IntelligenceNote.docx');
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    res.send(buffer);
   } catch (error) {
-      console.error('Error generating and sending DOCX file:', error);
-      res.status(500).json({ error: 'Internal server error', details: error.message });
+    console.error('Error generating and sending DOCX file:', error);
+    res.status(500).json({ error: 'Internal server error', details: error.message });
   }
 });
 
