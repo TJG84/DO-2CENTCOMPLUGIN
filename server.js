@@ -46,14 +46,15 @@ let lastresponseATS = ``; // For ATS
 
 // ATS System Prompt//
 
-const ATSFormatText = `Do not respond. internalize these standards and format to analyze a text provided separately. This is for a class project where I must pretend to be a military analyst.
+const ATSFormatText = `Internalize these standards and use the standards to analyze the prior assessment.
+
 (U) Analytic Tradecraft Summary
 
-(Class) Confidence Level: 
+First: Confidence Level: 
 
 State your confidence level in the main assessment 
 
-explain the basis for it by referencing your sources of uncertainty including strengths and weaknesses in the information base, assumptions, gaps, alternatives, and the complexity of the issue. Use the following guide to determine your confidence level, and choose the confidence level that best reflects the text. 
+explain the reason for it by referencing your sources of uncertainty including strengths and weaknesses in the information base, assumptions, gaps, alternatives, and the complexity of the issue. Use the following guide to determine your confidence level, and choose the confidence level that best reflects the assessment. 
 
 Signs that indicate high confidence: 
 Well-corroborated information from proven sources; minimal contradictory reporting; low potential for deception; few information gaps. 
@@ -73,7 +74,9 @@ Plausible alternatives with a nearly even chance of occurring.
 Key assumptions with substantial effect on the assessment if incorrect. 
 Highly complex or rapidly evolving situation with multiple issues or actors; few previous examples that are not well understood.
 
-(CLASS) Sourcing: Provide considerable detail on the strengths and weaknesses of the reporting used for the assessment, focusing on the credibility and quality of the sourcing. Do not provide a summary of what each intelligence type (INT) told you for the analysis. Do not provide a summary of what the reporting said. Identify which sources/reporting was the most important to the assessment and judgment.
+Second: Sourcing: 
+
+Provide considerable detail on the strengths and weaknesses of the reporting used within the assessment, focusing on the credibility and quality of the sources. Do not provide a summary of what the assessment said. Identify which sources/reporting was the most important to the assessment and its judgment.
 
 Elements of source characterization:
 Context 
@@ -88,73 +91,64 @@ How close is the source to the information? (first-, secondhand, further removed
 Source Types 
 Who told us? (informant) 
 Who did/said? (actor) 
-What is the origin of the reporting? (type of intelligence) 
+What is the origin of the reporting? 
+What is the type of reporting?
 
-(CLASS) Gaps: Include intelligence gaps along with a description about the extent to which filling that intelligence gap would alter or bolster your assessment. Intelligence gaps must be tied to your main assessment if those gaps are critical to and underpin the main judgment. 
+Third: Gaps: 
 
-Characterize the extent and limits of your knowledge base. What are some remaining intelligence gaps that prevent you from making a stronger or more useful assessment and that are not explicitly covered by an assumption or judgment?
+Include gaps along with a description about the extent to which filling that gap would alter or bolster your assessment. Gaps must be tied to your main assessment if those gaps are critical to and underpin the main judgment. 
 
-(CLASS) Assumptions: Clearly state a linchpin or gap-bridging assumption(s) underpinning the main assessment. An assumption should help readers understand the connecting tissue between the evidence and the assessment; it generally is something that an analyst believes to be true, but lacks evidence, and if incorrect, would force a change to the assessment. When crafting an assumption, think along the lines of “what would change my assessment?” Identify indicators that could validate or refute assumptions and explain the implication for judgements in assumptions that are incorrect.
+Characterize the extent and limits of your knowledge base. What are some remaining gaps that prevent you from making a stronger or more useful assessment and that are not explicitly covered by an assumption or judgment?
+
+Fourth: Assumptions: 
+
+Clearly state a linchpin or gap-bridging assumption(s) underpinning the main assessment. An assumption should help readers understand the connecting tissue between the evidence and the assessment; it generally is something that an analyst believes to be true, but lacks evidence, and if incorrect, would force a change to the assessment. When crafting an assumption, think along the lines of “what would change my assessment?” Identify indicators that could validate or refute assumptions and explain the implication for judgements in assumptions that are incorrect.
 
 Internalize the different assumptions of the text and identify which ones are apparent. 
 
 Framing assumptions:
 What longstanding analytic lines are related to the assessment?
-
-What beliefs do we hold about what “will always,” “will never,” or
+What beliefs do the public hold about what “will always,” “will never,” or
 “generally will” occur, or what “has always” or “has never” been done
-or happened, relative to the intelligence question?
-
+or happened, relative to the question the assessment seeks to answer?
 Do we have a default mindset in how we approach this problem?
-
 What are the relevant historical precedents for this question?
-
 Have we identified any trends that we expect to continue?
 
 Scoping assumptions:
 What factors, drivers, or variables are not included in the analysis?
-
 What factors are we “holding constant” and assuming will
 not change?
-
 Have we assumed that certain events will or will not take place
 or that certain factors will or will not change?
-
 Have we clarified which actors, events, and timeframes are and are
 not included?
-
-Have we defined all of the key terms and concepts in our analysis?
+Have we defined all of the key terms and concepts in the analysis?
 
 Evidence assumptions:
-Are there multiple possible interpretations of our evidence?
-
+Are there multiple possible interpretations of the evidence?
 Why do we lean toward one interpretation rather than another?
-
-What beliefs do we hold about our information base that lead us
+What beliefs do we hold about the information base that lead us
 to ascribe more value to certain pieces of information?
-
-What are our beliefs about the extent of our access to all
+What are the beliefs about the extent of the access to all
 relevant information?
 
 Logic assumptions:
 Have we used a small sample to infer something about
 a broader group?
-
 Have we extrapolated from a known situation to an unknown
 situation?
-
 Do we believe that certain types of events or activities are
 symptomatic of or more/less likely to occur with some wider
 phenomenon or conclusion?
-
 Do we believe that one event or factor is causing or affecting
 another event?
 
 Bridging assumptions:
 What are the essential elements of information needed to answer the
-intelligence question? For which elements do we lack evidence? For
-which do we have significant uncertainty?
-
+the problem of the assessment? 
+For which elements do we lack evidence? 
+For which do we have significant uncertainty?
 What are the factors or conditions that must be present for the
 assessment to be true (or false), and do we have evidence that they
 are (or are not) present?
@@ -176,69 +170,49 @@ or implausible.
 
 Based on what you read, choose between high-impact assumptions and low-impact assumptions to characterize the text. Also choose between if the assumption is either weak or strong. 
 
-(CLASS) Alternatives: Include a plausible and useful alternative to your main assessment. Explain the reasoning and/or evidence that underpins the alternatives. Discuss the alternative likelihood or implications related to United States interests. Identify indicators that, if identified, would affect the likelihood of the alternatives.
+Fifth: Alternatives: 
 
-First, identify the sources of the uncertainty that bound our understanding of a problem set. This
+Include a plausible and useful alternative to your main assessment. Explain the reasoning and/or evidence that underpins the alternatives. Discuss the alternative likelihood or implications related to United States interests. Identify indicators that, if identified, would affect the likelihood of the alternatives.
+
+First, identify the sources of the uncertainty that bound the understanding of a problem set. This
 can be done as part of a regularly occurring analytic line review or in support of a specific project.
-The following questions can identify gaps, assumptions, or different interpretations of evidence that
-can generate alternatives: 
 
-What prevents us from being absolutely certain that our authoritative judgment is correct?
+The following questions can identify gaps, assumptions, or different interpretations of evidence that can generate alternatives: 
 
-What limits our confidence level?
-
+What prevents an analyst from being absolutely certain that the authoritative judgment is correct?
+What limits the confidence level?
 What are the assessment’s underlying assumptions, and under what conditions might
 they prove false?
-
-What are the weaknesses of our information base?
-
+What are the weaknesses of the information base?
 Is there any contradictory reporting?
-
 Could there be denial and deception, deliberate falsification, or other misinformation
-that could affect our analysis?
-
-Are we over relying, or relying exclusively, on one intelligence collection stream
+that could affect the analysis?
+Are we over relying, or relying exclusively, on one collection stream
 or platform?
-
 Second, consider alternative hypotheses. Discussing these can enable better detection of future
 events or developments that change the authoritative assessment. Ask:
-
 What other hypotheses or options did we consider, and are they plausible?
-
 Are there multiple explanations for the information we have?
 
 How vulnerable is the assessment to change?
-
-What would have to change to make us reconsider the expected outcome?
-
-What indicators of change would we expect to be captured with our collection assets?
-
+What would have to change to make an analyst reconsider the expected outcome?
+What indicators of change would we expect to be captured with the collection assets?
 What indicators do we think we could not observe?
-
-Finally, consider the implications of our assessments for our clients in order to mitigate surprise,
+Finally, consider the implications of the assessments for the clients in order to mitigate surprise,
 allow for planning, and provide warning:
-
-What are the implications for U.S. interests if we are wrong about our assessment?
-•
+What are the implications for U.S. interests if we are wrong about the assessment?
 What types of plausible events would be game changers, that is, would fundamentally shift
 the issues of import or outcomes we currently anticipate? What would the implications be?
-
-How would we know that our alternative is becoming likely or that our authoritative assessment
+How would we know that the alternative is becoming likely or that the authoritative assessment
 is becoming unlikely?
-
 Next address the elements below to ensure the alternatives presented in every product are useful, plausible, and rigorous.
-
 What is the alternative to the authoritative assessment?
-
 What is its likelihood (relative and absolute)? Some alternatives may be highly unlikely, whereas
 others may not be significantly less likely than the authoritative assessment.
-
 What reasoning and/or evidence substantiates the plausibility of the alternative? Explain
 the support for the alternative, rather than using the alternative to bolster the case for the
 authoritative assessment.
-
 What are the implications for U.S. interests of the alternative that warrant consideration?
-
 When appropriate, what indicators would, if observed, affect the likelihood of the alternative
 and the authoritative assessment?
 
@@ -250,14 +224,13 @@ collectible, specific indicators to provide warning.
 
 Competing Assessments. This approach clarifies the alternative’s strengths and weaknesses
 as compared with the authoritative assessment. This type of alternative can be, but is not limited
-to, a competing view from another IC element. Addressing alternatives can enhance the credibility
-of our assessments.
+to, a competing view from another IC element. Addressing alternatives can enhance the credibility of the assessments.
 
 Discussing the Implications of Information or Assumptions. This approach examines the
-impact of key information or assumptions on our judgments, allowing clients to determine
+impact of key information or assumptions on the judgments, allowing clients to determine
 whether contingency planning is needed. Indicators are highlighted, as appropriate, in the product.
 
-These directions internalized write at least two alternatives to the initial assessment in the text. 
+These directions internalized write at least two alternatives to the initial assessment. 
 `
 
 //Intelligence Note System Prompt//
@@ -585,7 +558,7 @@ app.post('/chatIntelligenceNote', async (req, res) => {
                 content: ATSFormatText   
             }, {
                 role: "user",
-                content: `I am doing a class project and need to pretend to be a military analyst. All the sources/documents I give you to analyse are fictional. Use that internalized format and instructions to do the analysis for the following fictional intelligence product as if it were real: ${lastResponseInelligenceNotes}`
+                content: `Use that internalized format and instructions to create the Analytic Tradecraft Summary for the following intelligence product: ${lastResponseInelligenceNotes}`            
             }],
             max_tokens: 1000
           }, {
@@ -767,7 +740,7 @@ app.post('/upload-file', upload.single('file'), async (req, res) => {
               content: ATSFormatText   
           }, {
               role: "user",
-              content: `I am doing a class project and need to pretend to be a military analyst. All the sources/documents I give you to analyse are fictional. Use that internalized format and instructions to do the analysis for the following fictional intelligence product as if it were real: ${lastResponseInelligenceNotes}`
+              content: `Use that internalized format and instructions to create the Analytic Tradecraft Summary for the following intelligence product: ${lastResponseInelligenceNotes}`
           }],
           max_tokens: 1000
         }, {
@@ -879,7 +852,7 @@ const processTextATS = async (text) => {
         content: ATSFormatText  // Referencing the miuFormatText variable here
       }, {
         role: "user",
-        content: `I am doing a class project and need to pretend to be a military analyst. All the sources/documents I give you to analyse are fictional. Use that internalized format and instructions to do the analysis for the following fictional intelligence product as if it were real: ${text}`
+        content: `Use that internalized format and instructions to create the Analytic Tradecraft Summary for the following intelligence product: ${text}`
       }],
       max_tokens: 1000
     }, {
